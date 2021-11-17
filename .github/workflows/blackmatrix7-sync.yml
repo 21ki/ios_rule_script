@@ -1,29 +1,17 @@
-name: 同步
+# .github/workflows/sync.yml
+name: Sync Fork
+
 on:
+  push: # push 时触发, 主要是为了测试配置有没有问题
   schedule:
-    - cron: '0 1 * * *'
-  workflow_dispatch:
-  watch:
-    types: started
-  repository_dispatch:
-    types: repo-sync
+    - cron: '0 * * * *' # 每小时 0分触发, 对于一些更新不那么频繁的项目可以设置为每天一次, 低碳一点
 jobs:
   repo-sync:
-    env:
-      PAT: ${{ github.event.client_payload.PAT || secrets.PAT }} #此处PAT需要申请，教程详见：https://www.jianshu.com/p/bb82b3ad1d11
-
     runs-on: ubuntu-latest
-    if: github.event.repository.owner.id == github.event.sender.id
     steps:
-      - uses: actions/checkout@v2
+      - uses: TG908/fork-sync@v1.1
         with:
-          persist-credentials: false
-
-      - name: 开始🔄自动同步🔄
-        uses: repo-sync/github-sync@v2
-        if: env.PAT
-        with:
-          source_repo: "https://github.com/blackmatrix7/ios_rule_script"
-          source_branch: "master"
-          destination_branch: "master"
-          github_token: ${{ secrets.PAT }}
+          github_token: ${{ secrets.GITHUB_TOKEN }} # 这个 token action 会默认配置, 这里只需这样写就行
+          owner: anuraghazra # fork 上游项目 owner
+          head: master # fork 上游项目需要同步的分支
+          base: master # 需要同步到本项目的目标分支
