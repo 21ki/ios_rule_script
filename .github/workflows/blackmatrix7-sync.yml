@@ -26,5 +26,5 @@ jobs:
           source_repo: "https://github.com/blackmatrix7/ios_rule_script.git"
           source_branch: "master"
           destination_branch: "master"
-          github_token: ${{ github.event.client_payload.PAT || secrets.PAT }}
+          #github_token: ${{ github.event.client_payload.PAT || secrets.PAT }}
           sync_tags: "true"
